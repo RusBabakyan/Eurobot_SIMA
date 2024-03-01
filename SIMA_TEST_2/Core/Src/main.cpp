@@ -129,7 +129,6 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
-
   HAL_UART_Receive_IT (&huart3, buf, 1);
 
   SIMA.set_wheels_speed(2000, 2000, 0);
@@ -141,7 +140,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+	  SIMA.update_position();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

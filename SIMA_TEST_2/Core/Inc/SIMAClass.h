@@ -17,8 +17,8 @@ extern "C" {
 #include "ArduinoMath.h"
 #include "Terminal.h"
 
-#define SERVO_Pin GPIO_PIN_0
-#define SERVO_GPIO_Port GPIOA
+//#define SERVO_Pin GPIO_PIN_0
+//#define SERVO_GPIO_Port GPIOA
 #define DIR_L_Pin GPIO_PIN_3
 #define DIR_L_GPIO_Port GPIOA
 #define STP_L_Pin GPIO_PIN_4
@@ -27,28 +27,31 @@ extern "C" {
 #define DIR_R_GPIO_Port GPIOA
 #define STP_R_Pin GPIO_PIN_6
 #define STP_R_GPIO_Port GPIOA
-#define UART_TX_Pin GPIO_PIN_10
-#define UART_TX_GPIO_Port GPIOB
-#define UART_RX_Pin GPIO_PIN_11
-#define UART_RX_GPIO_Port GPIOB
-#define PWM_L_Pin GPIO_PIN_8
-#define PWM_L_GPIO_Port GPIOA
-#define PWM_R_Pin GPIO_PIN_9
-#define PWM_R_GPIO_Port GPIOA
-#define ENC_LA_Pin GPIO_PIN_4
-#define ENC_LA_GPIO_Port GPIOB
-#define ENC_LB_Pin GPIO_PIN_5
-#define ENC_LB_GPIO_Port GPIOB
-#define ENC_RA_Pin GPIO_PIN_6
-#define ENC_RA_GPIO_Port GPIOB
-#define ENC_RB_Pin GPIO_PIN_7
-#define ENC_RB_GPIO_Port GPIOB
+//#define UART_TX_Pin GPIO_PIN_10
+//#define UART_TX_GPIO_Port GPIOB
+//#define UART_RX_Pin GPIO_PIN_11
+//#define UART_RX_GPIO_Port GPIOB
+//#define PWM_L_Pin GPIO_PIN_8
+//#define PWM_L_GPIO_Port GPIOA
+//#define PWM_R_Pin GPIO_PIN_9
+//#define PWM_R_GPIO_Port GPIOA
+//#define ENC_LA_Pin GPIO_PIN_4
+//#define ENC_LA_GPIO_Port GPIOB
+//#define ENC_LB_Pin GPIO_PIN_5
+//#define ENC_LB_GPIO_Port GPIOB
+//#define ENC_RA_Pin GPIO_PIN_6
+//#define ENC_RA_GPIO_Port GPIOB
+//#define ENC_RB_Pin GPIO_PIN_7
+//#define ENC_RB_GPIO_Port GPIOB
 
-//extern SIMA_POSITION SIMA_POS;
+
 
 #define PWM_pulse 16383
 #define SERVO_MIN 25
 #define SERVO_MAX 75
+#define WHEELS_Rad
+#define WHEELS_Len
+
 
 
 class SIMA_Class {
@@ -86,8 +89,9 @@ private:
 	int32_t error_R = 0;
 
 	int32_t coeff = 44000;
-	float Radius = 64;
-	float Lenght = 110;
+	float Radius = 32;
+	float Lenght = 108;
+	uint16_t Step = 1024;
 
 	/* USER CODE BEGIN PV */
 };

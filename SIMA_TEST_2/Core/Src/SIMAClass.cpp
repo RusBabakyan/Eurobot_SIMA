@@ -70,9 +70,11 @@ void SIMA_Class::update_ticks(){
 void SIMA_Class::update_position(){
 	update_ticks();
 
+	if ((error_R | error_L) == 0) return;
+
 	if (error_R == error_L){
-		float R = (float)(Lenght/2)*(error_L+error_R)/(error_L-error_R);
-		float Wdt = (float)(error_L-error_R)*coeff/Lenght;
+		float R = 0;
+		float Wdt = 0;
 
 		SIMA_POS.ANGLE += Wdt;
 
@@ -94,14 +96,14 @@ void SIMA_Class::update_position(){
 
 		float SIN_Wdt = sin(Wdt);
 		float COS_Wdt = cos(Wdt);
-		float ICC_X = SIMA_POS.X - R * sin(SIMA_POS.ANGLE);
-		float ICC_Y = SIMA_POS.Y - R * cos(SIMA_POS.ANGLE);
+		float ICC_X = SIMA_POS.X - R * SIN_Wdt;
+		float ICC_Y = SIMA_POS.Y + R * COS_Wdt;
 
 		float X_ICC = SIMA_POS.X - ICC_X;
 		float Y_ICC = SIMA_POS.Y - ICC_Y;
 
-		SIMA_POS.X += COS_Wdt * X_ICC - SIN_Wdt * Y_ICC;
-		SIMA_POS.Y += SIN_Wdt * X_ICC + COS_Wdt * Y_ICC;
+		SIMA_POS.X += COS_Wdt * X_ICC - SIN_Wdt * Y_ICC + R * SIN_Wdt;
+		SIMA_POS.Y += SIN_Wdt * X_ICC + COS_Wdt * Y_ICC + R * SIN_Wdt;
 	}
 }
 

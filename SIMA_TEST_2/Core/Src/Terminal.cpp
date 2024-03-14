@@ -15,12 +15,13 @@ uint8_t buf[3];
 uint8_t rsp[15];
 uint8_t crc = 0;
 
-uint8_t CMD_LNG_IN[Count] = {5, 0, 1, 0};
-uint8_t CMD_LNG_OUT[Count] = {0, 5, 0, 12};
+uint8_t CMD_LNG_IN[Count] = {5, 0, 1, 0, 12};
+uint8_t CMD_LNG_OUT[Count] = {0, 5, 0, 12, 0};
 
 CMD_SET_SPEED msg_in;
 
 extern SIMA_Class SIMA;
+extern SIMA_POSITION SIMA_POS;
 
 
 uint8_t calc_crc(uint8_t cmd, uint8_t* data, uint8_t data_length){
@@ -51,10 +52,10 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 		{
 		memcpy((uint8_t*)&msg_in, str, CMD_LNG_IN[cmd]);
 		Send_response(SET_SPEED, rsp);
-//		move_SIMA(MESSAGE, 0);
 		SIMA.set_wheels_speed(msg_in.speed_L, msg_in.speed_R, msg_in.antistop_flag);
 		}
 		break;
+
 	case PING:
 		{
 //		memcpy((uint8_t*)&msg_in, str, CMD_LNG_IN[cmd]);
@@ -65,6 +66,7 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 		Send_response(PING, (uint8_t*)&msg_out);
 		}
 		break;
+
 	case GRIPPER:
 		{
 			uint8_t _angle = str[0];
@@ -72,16 +74,19 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 			SIMA.servo_write(_angle);
 		}
 		break;
+
 	case POSITION:
 		{
-		SIMA_POSITION msg_out;
-		msg_out.ANGLE = 1234;
-		msg_out.X = 5678;
-		msg_out.Y = 9012;
-		Send_response(POSITION, (uint8_t*)&msg_out);
+		Send_response(POSITION, (uint8_t*)&SIMA_POS);
 		}
-//
-			break;
+		break;
+
+	case SET_POSITION:
+		{
+		memcpy((uint8_t*)&SIMA_POS, str, CMD_LNG_IN[cmd]);
+		Send_response(SET_POSITION, (uint8_t*)&rsp);
+		}
+		break;
 	}
 }
 

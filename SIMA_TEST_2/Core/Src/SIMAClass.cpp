@@ -45,12 +45,14 @@ void SIMA_Class::update_ticks(){
 	error_L = currCounter_L - prevCounter_L;
 
 	if (error_L > (1 << 15))
-		ticks_L += (int32_t) error_L - (1 << 16);
+		error_L = (int32_t) error_L - (1 << 16);
+//		ticks_L += (int32_t) error_L - (1 << 16);
 	else if (error_L < -1 * (1 << 15))
-		ticks_L += (int32_t) error_L + (1 << 16);
-	else
-		ticks_L += (int32_t) error_L;
-
+		error_L = (int32_t) error_L + (1 << 16);
+//		ticks_L += (int32_t) error_L + (1 << 16);
+	else {}
+//		ticks_L += (int32_t) error_L;
+	ticks_L += (int32_t) error_L;
 	prevCounter_L = currCounter_L;
 
 	static uint16_t prevCounter_R = 0;
@@ -58,12 +60,14 @@ void SIMA_Class::update_ticks(){
 	error_R = currCounter_R - prevCounter_R;
 
 	if (error_R > (1 << 15))
-		ticks_R += (int32_t) error_R - (1 << 16);
+		error_R = (int32_t) error_R - (1 << 16);
+//		ticks_R += (int32_t) error_R - (1 << 16);
 	else if (error_R < -1 * (1 << 15))
-		ticks_R += (int32_t) error_R + (1 << 16);
-	else
-		ticks_R += (int32_t) error_R;
-
+		error_R = (int32_t) error_R + (1 << 16);
+//		ticks_R += (int32_t) error_R + (1 << 16);
+	else {}
+//		ticks_R += (int32_t) error_R;
+	ticks_R += (int32_t) error_R;
 	prevCounter_R = currCounter_R;
 }
 
@@ -72,39 +76,23 @@ void SIMA_Class::update_position(){
 
 	if ((error_R | error_L) == 0) return;
 
-	if (error_R == error_L){
-		float R = 0;
-		float Wdt = 0;
+//	th_diff =   (float)dist_per_rev * (error_R - error_L) / (ticks_per_rev * Lenght);
+//	d = 		(float)dist_per_rev * (error_R + error_L) / (2 * ticks_per_rev);
+//	SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
+//	SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
+//	SIMA_POS.ANGLE += th_diff;
+//	SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - M_PI : SIMA_POS.ANGLE;
+//	SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + M_PI : SIMA_POS.ANGLE;
+	d_l = error_L * dist_per_rev / ticks_per_rev;
+	d_r = error_R * dist_per_rev / ticks_per_rev;
+	th_diff = (d_r - d_l) / (Lenght);
+	d = 	  (d_l + d_r) / 2;
+	SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
+	SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
+	SIMA_POS.ANGLE += th_diff;
+	SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
+	SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
 
-		SIMA_POS.ANGLE += Wdt;
-
-		float SIN_Wdt = sin(Wdt);
-		float COS_Wdt = cos(Wdt);
-		float ICC_X = SIMA_POS.X - R * sin(SIMA_POS.ANGLE);
-		float ICC_Y = SIMA_POS.Y - R * cos(SIMA_POS.ANGLE);
-
-		float X_ICC = SIMA_POS.X - ICC_X;
-		float Y_ICC = SIMA_POS.Y - ICC_Y;
-
-		SIMA_POS.X += COS_Wdt * X_ICC - SIN_Wdt * Y_ICC;
-		SIMA_POS.Y += SIN_Wdt * X_ICC + COS_Wdt * Y_ICC;
-	} else {
-		float R = (float)(Lenght/2)*(error_L+error_R)/(error_L-error_R);
-		float Wdt = (float)(error_L-error_R)*coeff/Lenght;
-
-		SIMA_POS.ANGLE += Wdt;
-
-		float SIN_Wdt = sin(Wdt);
-		float COS_Wdt = cos(Wdt);
-		float ICC_X = SIMA_POS.X - R * SIN_Wdt;
-		float ICC_Y = SIMA_POS.Y + R * COS_Wdt;
-
-		float X_ICC = SIMA_POS.X - ICC_X;
-		float Y_ICC = SIMA_POS.Y - ICC_Y;
-
-		SIMA_POS.X += COS_Wdt * X_ICC - SIN_Wdt * Y_ICC + R * SIN_Wdt;
-		SIMA_POS.Y += SIN_Wdt * X_ICC + COS_Wdt * Y_ICC + R * SIN_Wdt;
-	}
 }
 
 void SIMA_Class::servo_write(uint8_t angle){

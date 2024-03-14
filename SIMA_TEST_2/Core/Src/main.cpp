@@ -61,6 +61,7 @@ SIMA_Class SIMA;
 
 extern uint8_t buf[3];
 
+uint32_t second = 0;
 
 
 
@@ -131,7 +132,7 @@ int main(void)
 
   HAL_UART_Receive_IT (&huart3, buf, 1);
 
-  SIMA.set_wheels_speed(2000, 2000, 0);
+  SIMA.set_wheels_speed(0, 0, 0);
 
 
   /* USER CODE END 2 */
@@ -141,6 +142,8 @@ int main(void)
   while (1)
   {
 	  SIMA.update_position();
+	  HAL_Delay(50);
+	  second = HAL_GetTick() / 1000;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

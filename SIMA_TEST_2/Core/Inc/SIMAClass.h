@@ -88,10 +88,20 @@ private:
 	int32_t error_L = 0;
 	int32_t error_R = 0;
 
-	int32_t coeff = 44000;
+//	int32_t coeff = 44000;
 	float Radius = 32;
 	float Lenght = 108;
-	uint16_t Step = 1024;
+	float ticks_per_rev = 44000;
+	float dist_per_rev  = M_PI * 2 * Radius;
+
+
+	float th_diff;
+	float d;
+
+	float d_l;
+	float d_r;
+
+//	uint16_t Step = 1024;
 
 	/* USER CODE BEGIN PV */
 };

@@ -72,26 +72,30 @@ void SIMA_Class::update_ticks(){
 }
 
 void SIMA_Class::update_position(){
-	update_ticks();
+	static uint32_t update_timer = HAL_GetTick();
+	if ((HAL_GetTick() - update_timer) > 50){
+		update_ticks();
 
-	if ((error_R | error_L) == 0) return;
+		if ((error_R | error_L) == 0) return;
 
-//	th_diff =   (float)dist_per_rev * (error_R - error_L) / (ticks_per_rev * Lenght);
-//	d = 		(float)dist_per_rev * (error_R + error_L) / (2 * ticks_per_rev);
-//	SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
-//	SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
-//	SIMA_POS.ANGLE += th_diff;
-//	SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - M_PI : SIMA_POS.ANGLE;
-//	SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + M_PI : SIMA_POS.ANGLE;
-	d_l = error_L * dist_per_rev / ticks_per_rev;
-	d_r = error_R * dist_per_rev / ticks_per_rev;
-	th_diff = (d_r - d_l) / (Lenght);
-	d = 	  (d_l + d_r) / 2;
-	SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
-	SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
-	SIMA_POS.ANGLE += th_diff;
-	SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
-	SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
+	//	th_diff =   (float)dist_per_rev * (error_R - error_L) / (ticks_per_rev * Lenght);
+	//	d = 		(float)dist_per_rev * (error_R + error_L) / (2 * ticks_per_rev);
+	//	SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
+	//	SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
+	//	SIMA_POS.ANGLE += th_diff;
+	//	SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - M_PI : SIMA_POS.ANGLE;
+	//	SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + M_PI : SIMA_POS.ANGLE;
+		d_l = error_L * dist_per_rev / ticks_per_rev;
+		d_r = error_R * dist_per_rev / ticks_per_rev;
+		th_diff = (d_r - d_l) / (Lenght);
+		d = 	  (d_l + d_r) / 2;
+		SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
+		SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
+		SIMA_POS.ANGLE += th_diff;
+		SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
+		SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
+	}
+
 
 }
 

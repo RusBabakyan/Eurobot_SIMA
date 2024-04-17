@@ -63,8 +63,6 @@ extern uint8_t buf[3];
 
 uint32_t second = 0;
 
-
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -142,7 +140,7 @@ int main(void)
   while (1)
   {
 	  SIMA.update_position();
-	  HAL_Delay(50);
+//	  HAL_Delay(50);
 	  second = HAL_GetTick() / 1000;
     /* USER CODE END WHILE */
 

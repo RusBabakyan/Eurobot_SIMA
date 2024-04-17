@@ -16,6 +16,7 @@ extern "C" {
 #include <math.h>
 #include "ArduinoMath.h"
 #include "Terminal.h"
+#include "VL53L0X.h"
 
 //#define SERVO_Pin GPIO_PIN_0
 //#define SERVO_GPIO_Port GPIOA
@@ -27,6 +28,9 @@ extern "C" {
 #define DIR_R_GPIO_Port GPIOA
 #define STP_R_Pin GPIO_PIN_6
 #define STP_R_GPIO_Port GPIOA
+
+#define XSHUT_1_Pin GPIO_PIN_13
+#define XSHUT_1_GPIO_Port GPIOC
 //#define UART_TX_Pin GPIO_PIN_10
 //#define UART_TX_GPIO_Port GPIOB
 //#define UART_RX_Pin GPIO_PIN_11
@@ -45,13 +49,11 @@ extern "C" {
 //#define ENC_RB_GPIO_Port GPIOB
 
 
-
 #define PWM_pulse 16383
 #define SERVO_MIN 25
 #define SERVO_MAX 75
 #define WHEELS_Rad
 #define WHEELS_Len
-
 
 
 class SIMA_Class {
@@ -64,9 +66,13 @@ public:
 	void update_ticks();
 	void update_position();
 	void servo_write(uint8_t angle);
+	void sensor_init();
+	void update_distance();
+
+
+
+
 	/* USER CODE END PFP */
-
-
 
 private:
 	/* Private function prototypes -----------------------------------------------*/
@@ -93,15 +99,18 @@ private:
 	float Lenght = 108;
 	float ticks_per_rev = 44000;
 	float dist_per_rev  = M_PI * 2 * Radius;
-
-
 	float th_diff;
 	float d;
-
 	float d_l;
 	float d_r;
 
 //	uint16_t Step = 1024;
+
+//  sensor:
+
+	statInfo_t_VL53L0X distanceStr1;
+	VL53L0X dev1;
+	uint16_t distance;
 
 	/* USER CODE BEGIN PV */
 };

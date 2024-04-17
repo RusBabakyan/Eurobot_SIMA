@@ -120,7 +120,8 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM2_Init();
   MX_I2C1_Init();
-//  /* USER CODE BEGIN 2 */
+  /* USER CODE BEGIN 2 */
+
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
 
@@ -128,9 +129,11 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
-  HAL_UART_Receive_IT (&huart3, buf, 1);
-
   SIMA.set_wheels_speed(0, 0, 0);
+
+  SIMA.sensor_init();
+
+  HAL_UART_Receive_IT (&huart3, buf, 1);
 
 
   /* USER CODE END 2 */
@@ -140,6 +143,7 @@ int main(void)
   while (1)
   {
 	  SIMA.update_position();
+	  SIMA.update_distance();
 //	  HAL_Delay(50);
 	  second = HAL_GetTick() / 1000;
     /* USER CODE END WHILE */
@@ -503,12 +507,23 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(XSHUT_1_GPIO_Port, XSHUT_1_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, DIR_L_Pin|STP_L_Pin|DIR_R_Pin|STP_R_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : XSHUT_1_Pin */
+  GPIO_InitStruct.Pin = XSHUT_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(XSHUT_1_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DIR_L_Pin STP_L_Pin DIR_R_Pin STP_R_Pin */
   GPIO_InitStruct.Pin = DIR_L_Pin|STP_L_Pin|DIR_R_Pin|STP_R_Pin;

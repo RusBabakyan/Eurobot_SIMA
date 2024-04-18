@@ -15,8 +15,8 @@ uint8_t buf[3];
 uint8_t rsp[15];
 uint8_t crc = 0;
 
-uint8_t CMD_LNG_IN[Count] = {5, 0, 1, 0, 12};
-uint8_t CMD_LNG_OUT[Count] = {0, 5, 0, 12, 0};
+uint8_t CMD_LNG_IN[Count] =  {5, 0, 1, 0, 12, 0};
+uint8_t CMD_LNG_OUT[Count] = {0, 5, 0, 12, 0, 0};
 
 CMD_SET_SPEED msg_in;
 
@@ -85,6 +85,14 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 		{
 		memcpy((uint8_t*)&SIMA_POS, str, CMD_LNG_IN[cmd]);
 		Send_response(SET_POSITION, (uint8_t*)&rsp);
+		}
+		break;
+
+	case SENSOR_INIT:
+		{
+		Send_response(SENSOR_INIT, (uint8_t*)&rsp);
+//		SIMA.sensor_init();
+		NVIC_SystemReset();
 		}
 		break;
 	}

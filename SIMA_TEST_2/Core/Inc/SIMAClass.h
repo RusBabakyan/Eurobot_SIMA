@@ -31,6 +31,8 @@ extern "C" {
 
 #define XSHUT_1_Pin GPIO_PIN_13
 #define XSHUT_1_GPIO_Port GPIOC
+#define Power_Pin GPIO_PIN_14
+#define Power_GPIO_Port GPIOC
 //#define UART_TX_Pin GPIO_PIN_10
 //#define UART_TX_GPIO_Port GPIOB
 //#define UART_RX_Pin GPIO_PIN_11
@@ -111,6 +113,7 @@ private:
 	statInfo_t_VL53L0X distanceStr1;
 	VL53L0X dev1;
 	uint16_t distance;
+	bool sensor_ready;
 
 	/* USER CODE BEGIN PV */
 };

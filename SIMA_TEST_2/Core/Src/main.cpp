@@ -130,6 +130,7 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
   SIMA.set_wheels_speed(0, 0, 0);
+  HAL_GPIO_WritePin(Power_GPIO_Port, Power_Pin, GPIO_PIN_RESET);
 
   SIMA.sensor_init();
 
@@ -512,17 +513,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(XSHUT_1_GPIO_Port, XSHUT_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, XSHUT_1_Pin|Power_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, DIR_L_Pin|STP_L_Pin|DIR_R_Pin|STP_R_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : XSHUT_1_Pin */
-  GPIO_InitStruct.Pin = XSHUT_1_Pin;
+  /*Configure GPIO pins : XSHUT_1_Pin Power_Pin */
+  GPIO_InitStruct.Pin = XSHUT_1_Pin|Power_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(XSHUT_1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DIR_L_Pin STP_L_Pin DIR_R_Pin STP_R_Pin */
   GPIO_InitStruct.Pin = DIR_L_Pin|STP_L_Pin|DIR_R_Pin|STP_R_Pin;

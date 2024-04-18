@@ -109,13 +109,17 @@ void SIMA_Class::servo_write(uint8_t angle){
 }
 
 void SIMA_Class::sensor_init(){
+	HAL_NVIC_DisableIRQ(USART3_IRQn);
+	sensor_ready = true;
 	dev1.g_i2cAddr = 0b01010010;
 	dev1.g_ioTimeout = 0;
 	dev1.g_isTimeout = 0;
 
 	HAL_GPIO_WritePin(XSHUT_1_GPIO_Port, XSHUT_1_Pin, GPIO_PIN_RESET);
-	HAL_Delay(10);
+	HAL_GPIO_WritePin(Power_GPIO_Port, Power_Pin, GPIO_PIN_RESET);
+	HAL_Delay(100);
 	HAL_GPIO_WritePin(XSHUT_1_GPIO_Port, XSHUT_1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(Power_GPIO_Port, Power_Pin, GPIO_PIN_SET);
 	HAL_Delay(50);
 
 	initVL53L0X(&dev1, 1, &hi2c1);
@@ -133,13 +137,17 @@ void SIMA_Class::sensor_init(){
 
 	startContinuous(&dev1,0);
 	HAL_Delay(10);
+
+	HAL_NVIC_EnableIRQ(USART3_IRQn);
 }
 
 void SIMA_Class::update_distance(){
 	static uint32_t update_timer = HAL_GetTick();
-	if ((HAL_GetTick() - update_timer) > 50){
-		distance = readRangeContinuousMillimeters(&dev1, &distanceStr1);
-		stopflag = (distance < 150)?true:false;
+	if (sensor_ready){
+		if ((HAL_GetTick() - update_timer) > 50){
+			distance = readRangeContinuousMillimeters(&dev1, &distanceStr1);
+			stopflag = (distance < 150)?true:false;
+		}
 	}
 }
 

@@ -136,8 +136,11 @@ void SIMA_Class::sensor_init(){
 }
 
 void SIMA_Class::update_distance(){
-	distance = readRangeContinuousMillimeters(&dev1, &distanceStr1);
-	stopflag = (distance < 100)?true:false;
+	static uint32_t update_timer = HAL_GetTick();
+	if ((HAL_GetTick() - update_timer) > 50){
+		distance = readRangeContinuousMillimeters(&dev1, &distanceStr1);
+		stopflag = (distance < 150)?true:false;
+	}
 }
 
 

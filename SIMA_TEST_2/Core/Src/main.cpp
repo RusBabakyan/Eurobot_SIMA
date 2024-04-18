@@ -144,7 +144,6 @@ int main(void)
   {
 	  SIMA.update_position();
 	  SIMA.update_distance();
-//	  HAL_Delay(50);
 	  second = HAL_GetTick() / 1000;
     /* USER CODE END WHILE */
 

@@ -44,18 +44,15 @@ void SIMA_Class::set_wheels_speed(int16_t speed_L, int16_t speed_R, bool antisto
 
 void SIMA_Class::update_ticks(){
 	static uint16_t prevCounter_L = 0;
-	uint16_t currCounter_L = __HAL_TIM_GET_COUNTER(&htim3);
+	uint16_t currCounter_L = -__HAL_TIM_GET_COUNTER(&htim3);
 	error_L = currCounter_L - prevCounter_L;
 
 	if (error_L > (1 << 15))
 		error_L = (int32_t) error_L - (1 << 16);
-//		ticks_L += (int32_t) error_L - (1 << 16);
 	else if (error_L < -1 * (1 << 15))
 		error_L = (int32_t) error_L + (1 << 16);
-//		ticks_L += (int32_t) error_L + (1 << 16);
 	else {}
-//		ticks_L += (int32_t) error_L;
-	ticks_L += (int32_t) error_L;
+		ticks_L += (int32_t) error_L;
 	prevCounter_L = currCounter_L;
 
 	static uint16_t prevCounter_R = 0;
@@ -64,42 +61,34 @@ void SIMA_Class::update_ticks(){
 
 	if (error_R > (1 << 15))
 		error_R = (int32_t) error_R - (1 << 16);
-//		ticks_R += (int32_t) error_R - (1 << 16);
 	else if (error_R < -1 * (1 << 15))
 		error_R = (int32_t) error_R + (1 << 16);
-//		ticks_R += (int32_t) error_R + (1 << 16);
 	else {}
-//		ticks_R += (int32_t) error_R;
-	ticks_R += (int32_t) error_R;
+		ticks_R += (int32_t) error_R;
 	prevCounter_R = currCounter_R;
 }
 
 void SIMA_Class::update_position(){
 	static uint32_t update_timer = HAL_GetTick();
-	if ((HAL_GetTick() - update_timer) > 50){
+	uint32_t time = HAL_GetTick() - update_timer;
+	if ((time) > 50){
 		update_ticks();
 
 		if ((error_R | error_L) == 0) return;
 
-	//	th_diff =   (float)dist_per_rev * (error_R - error_L) / (ticks_per_rev * Lenght);
-	//	d = 		(float)dist_per_rev * (error_R + error_L) / (2 * ticks_per_rev);
-	//	SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
-	//	SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
-	//	SIMA_POS.ANGLE += th_diff;
-	//	SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - M_PI : SIMA_POS.ANGLE;
-	//	SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + M_PI : SIMA_POS.ANGLE;
+		speed_L = error_L * M_TWOPI / (ticks_per_rev * time);
+		speed_R = error_R * M_TWOPI / (ticks_per_rev * time);
+
 		d_l = error_L * dist_per_rev / ticks_per_rev;
 		d_r = error_R * dist_per_rev / ticks_per_rev;
 		th_diff = (d_r - d_l) / (Lenght);
 		d = 	  (d_l + d_r) / 2;
-		SIMA_POS.X -= d * cos(SIMA_POS.ANGLE);
-		SIMA_POS.Y -= d * sin(SIMA_POS.ANGLE);
-		SIMA_POS.ANGLE += th_diff;
+		SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
+		SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
+		SIMA_POS.ANGLE -= th_diff;
 		SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
 		SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
 	}
-
-
 }
 
 void SIMA_Class::servo_write(uint8_t angle){

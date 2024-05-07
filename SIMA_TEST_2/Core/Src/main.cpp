@@ -132,7 +132,7 @@ int main(void)
   SIMA.set_wheels_speed(0, 0, 0);
   HAL_GPIO_WritePin(Power_GPIO_Port, Power_Pin, GPIO_PIN_RESET);
 
-  SIMA.sensor_init();
+//  SIMA.sensor_init();
 
   HAL_UART_Receive_IT (&huart3, buf, 1);
 
@@ -144,7 +144,7 @@ int main(void)
   while (1)
   {
 	  SIMA.update_position();
-	  SIMA.update_distance();
+//	  SIMA.update_distance();
 	  second = HAL_GetTick() / 1000;
     /* USER CODE END WHILE */
 

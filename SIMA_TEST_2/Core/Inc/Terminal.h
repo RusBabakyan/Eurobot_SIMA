@@ -33,7 +33,15 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
-enum CMD {SET_SPEED, PING, GRIPPER, POSITION, SET_POSITION, SENSOR_INIT, Count };
+enum CMD {SET_SPEED,
+		PING,
+		GRIPPER,
+		POSITION,
+		SET_POSITION,
+		SENSOR_INIT,
+		GET_SPEED,
+		GET_POS_SPEED,
+		Count };
 
 struct __attribute((packed)) CMD_SET_SPEED{
 	int16_t speed_L;

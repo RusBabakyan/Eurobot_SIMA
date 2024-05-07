@@ -70,11 +70,15 @@ public:
 	void servo_write(uint8_t angle);
 	void sensor_init();
 	void update_distance();
-
-
-
-
 	/* USER CODE END PFP */
+
+	/* Private variables ---------------------------------------------------------*/
+	/* USER CODE BEGIN PV */
+
+	float speed_L = 0;
+	float speed_R = 0;
+
+	/* USER CODE BEGIN PV */
 
 private:
 	/* Private function prototypes -----------------------------------------------*/

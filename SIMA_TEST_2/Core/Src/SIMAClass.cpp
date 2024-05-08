@@ -69,15 +69,22 @@ void SIMA_Class::update_ticks(){
 }
 
 void SIMA_Class::update_position(){
-	static uint32_t update_timer = HAL_GetTick();
-	uint32_t time = HAL_GetTick() - update_timer;
-	if ((time) > 50){
+
+	dif_time = HAL_GetTick() - time;
+
+	if ((dif_time) > 10){
 		update_ticks();
+
+		dif_time = HAL_GetTick() - time;
+		time = HAL_GetTick();
 
 		if ((error_R | error_L) == 0) return;
 
-		speed_L = error_L * M_TWOPI / (ticks_per_rev * time);
-		speed_R = error_R * M_TWOPI / (ticks_per_rev * time);
+		speed_L = error_L * M_TWOPI * 1000 / (ticks_per_rev * dif_time);
+		speed_R = error_R * M_TWOPI * 1000 / (ticks_per_rev * dif_time);
+
+		speed_L = abs(speed_L) < 0.015 ? 0 : speed_L;
+		speed_R = abs(speed_R) < 0.015 ? 0 : speed_R;
 
 		d_l = error_L * dist_per_rev / ticks_per_rev;
 		d_r = error_R * dist_per_rev / ticks_per_rev;
@@ -88,6 +95,8 @@ void SIMA_Class::update_position(){
 		SIMA_POS.ANGLE -= th_diff;
 		SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
 		SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
+
+
 	}
 }
 

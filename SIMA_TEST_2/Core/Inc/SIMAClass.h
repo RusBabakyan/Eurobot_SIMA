@@ -100,6 +100,9 @@ private:
 	int32_t error_L = 0;
 	int32_t error_R = 0;
 
+	uint32_t time = 0;
+	uint32_t dif_time = 0;
+
 //	int32_t coeff = 44000;
 	float Radius = 32;
 	float Lenght = 108;

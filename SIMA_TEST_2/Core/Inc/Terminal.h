@@ -61,6 +61,14 @@ struct __attribute((packed)) SIMA_POSITION{
 	float ANGLE;
 };
 
+struct __attribute((packed)) POS_SPEED{
+	float X;
+	float Y;
+	float ANGLE;
+	float SPEED_L;
+	float SPEED_R;
+};
+
 extern UART_HandleTypeDef huart3;
 
 /* USER CODE END ET */

@@ -98,18 +98,22 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 
 	case GET_SPEED:
 		{
-		memcpy(rsp,   (uint8_t*)&SIMA.speed_L, 4);
-		memcpy(rsp+4, (uint8_t*)&SIMA.speed_R, 4);
-		Send_response(GET_SPEED, (uint8_t*)&rsp);
+		memcpy((uint8_t*)&str,   (uint8_t*)&SIMA.speed_L, 4);
+		memcpy((uint8_t*)&str+4, (uint8_t*)&SIMA.speed_R, 4);
+		Send_response(GET_SPEED, (uint8_t*)&str);
 		}
 		break;
 
 	case GET_POS_SPEED:
 		{
-		memcpy(rsp, (uint8_t*)&SIMA_POS, 12);
-		memcpy(rsp +12,     (uint8_t*)&SIMA.speed_L, 4);
-		memcpy(rsp +12 + 4, (uint8_t*)&SIMA.speed_R, 4);
-		Send_response(GET_SPEED, (uint8_t*)&rsp);
+		POS_SPEED msg;
+		memcpy((uint8_t*)&msg, (uint8_t*)&SIMA_POS, 12);
+		msg.SPEED_L = SIMA.speed_L;
+		msg.SPEED_R = SIMA.speed_R;
+//		memcpy((uint8_t*)&str, 		   (uint8_t*)&SIMA_POS, 12);
+//		memcpy((uint8_t*)&str +12,     (uint8_t*)&SIMA.speed_L, 4);
+//		memcpy((uint8_t*)&str +16, (uint8_t*)&SIMA.speed_R, 4);
+		Send_response(GET_POS_SPEED, (uint8_t*)&msg);
 		}
 		break;
 	}

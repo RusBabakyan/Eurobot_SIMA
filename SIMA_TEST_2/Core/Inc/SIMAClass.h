@@ -106,7 +106,10 @@ private:
 //	int32_t coeff = 44000;
 	float Radius = 32;
 	float Lenght = 108;
-	float ticks_per_rev = 44000;
+//	float ticks_per_rev = 44000;
+	uint32_t gear = 21;
+	uint32_t ticks = 1024;
+	float ticks_per_rev = gear * ticks * 2;
 	float dist_per_rev  = M_PI * 2 * Radius;
 	float th_diff;
 	float d;

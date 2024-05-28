@@ -7,7 +7,6 @@
 
 #include <SIMAClass.h>
 
-
 //SIMA_Class::SIMA_Class() {
 //	// TODO Auto-generated constructor stub
 //
@@ -18,6 +17,7 @@ extern TIM_HandleTypeDef htim4;
 extern SIMA_POSITION SIMA_POS;
 extern I2C_HandleTypeDef hi2c1;
 
+extern CMD_SET_SPEED target_speed;
 
 
 void SIMA_Class::set_wheels_speed(int16_t speed_L, int16_t speed_R, bool antistop_flag){
@@ -93,10 +93,8 @@ void SIMA_Class::update_position(){
 		SIMA_POS.X += d * cos(SIMA_POS.ANGLE);
 		SIMA_POS.Y += d * sin(SIMA_POS.ANGLE);
 		SIMA_POS.ANGLE -= th_diff;
-		SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
-		SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
-
-
+//		SIMA_POS.ANGLE = SIMA_POS.ANGLE >  2*M_PI ? SIMA_POS.ANGLE - 2*M_PI : SIMA_POS.ANGLE;
+//		SIMA_POS.ANGLE = SIMA_POS.ANGLE < -2*M_PI ? SIMA_POS.ANGLE + 2*M_PI : SIMA_POS.ANGLE;
 	}
 }
 
@@ -145,6 +143,11 @@ void SIMA_Class::update_distance(){
 		if ((HAL_GetTick() - update_timer) > 50){
 			distance = readRangeContinuousMillimeters(&dev1, &distanceStr1);
 			stopflag = (distance < 150)?true:false;
+			if (stopflag && !target_speed.antistop_flag){
+				set_wheels_speed(0, 0, false);
+			} else {
+				set_wheels_speed(target_speed.speed_L, target_speed.speed_R, target_speed.antistop_flag);
+			}
 		}
 	}
 }

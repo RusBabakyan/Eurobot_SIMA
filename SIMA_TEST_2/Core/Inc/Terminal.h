@@ -41,6 +41,7 @@ enum CMD {SET_SPEED,
 		SENSOR_INIT,
 		GET_SPEED,
 		GET_POS_SPEED,
+		GET_POS_DISTANCE,
 		Count };
 
 struct __attribute((packed)) CMD_SET_SPEED{
@@ -59,6 +60,14 @@ struct __attribute((packed)) SIMA_POSITION{
 	float X;
 	float Y;
 	float ANGLE;
+};
+
+struct __attribute((packed)) SIMA_POSITION_DISTANCE{
+	float X;
+	float Y;
+	float ANGLE;
+	bool stopflag;
+	uint16_t distance;
 };
 
 struct __attribute((packed)) POS_SPEED{

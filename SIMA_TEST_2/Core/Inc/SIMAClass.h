@@ -57,6 +57,13 @@ extern "C" {
 #define WHEELS_Rad
 #define WHEELS_Len
 
+// robot 1 - 21
+// robot 2 - 28
+// robot 3 - 28
+
+//#define GEAR_RATIO 21
+#define GEAR_RATIO 28
+
 
 class SIMA_Class {
 public:
@@ -78,6 +85,9 @@ public:
 	float speed_L = 0;
 	float speed_R = 0;
 
+	uint16_t distance;
+	bool stopflag = 0;
+
 	/* USER CODE BEGIN PV */
 
 private:
@@ -89,7 +99,7 @@ private:
 	/* Private variables ---------------------------------------------------------*/
 	/* USER CODE BEGIN PV */
 
-	bool stopflag = 0;
+
 
 	int16_t speed_min = PWM_pulse*0.1 + 10;
 	int16_t speed_max = PWM_pulse*0.9 - 10;
@@ -109,7 +119,7 @@ private:
 //	float ticks_per_rev = 44000;
 	uint32_t gear = 21;
 	uint32_t ticks = 1024;
-	float ticks_per_rev = gear * ticks * 2;
+	float ticks_per_rev = GEAR_RATIO * ticks * 2;
 	float dist_per_rev  = M_PI * 2 * Radius;
 	float th_diff;
 	float d;
@@ -122,7 +132,6 @@ private:
 
 	statInfo_t_VL53L0X distanceStr1;
 	VL53L0X dev1;
-	uint16_t distance;
 	bool sensor_ready;
 
 	/* USER CODE BEGIN PV */

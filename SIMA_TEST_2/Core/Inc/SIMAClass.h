@@ -16,6 +16,7 @@ extern "C" {
 #include <math.h>
 #include "ArduinoMath.h"
 #include "Terminal.h"
+#include "VL53L0X.h"
 
 //#define SERVO_Pin GPIO_PIN_0
 //#define SERVO_GPIO_Port GPIOA
@@ -27,6 +28,11 @@ extern "C" {
 #define DIR_R_GPIO_Port GPIOA
 #define STP_R_Pin GPIO_PIN_6
 #define STP_R_GPIO_Port GPIOA
+
+#define XSHUT_1_Pin GPIO_PIN_13
+#define XSHUT_1_GPIO_Port GPIOC
+#define Power_Pin GPIO_PIN_14
+#define Power_GPIO_Port GPIOC
 //#define UART_TX_Pin GPIO_PIN_10
 //#define UART_TX_GPIO_Port GPIOB
 //#define UART_RX_Pin GPIO_PIN_11
@@ -45,13 +51,18 @@ extern "C" {
 //#define ENC_RB_GPIO_Port GPIOB
 
 
-
 #define PWM_pulse 16383
 #define SERVO_MIN 25
 #define SERVO_MAX 75
 #define WHEELS_Rad
 #define WHEELS_Len
 
+// robot 1 - 21
+// robot 2 - 28
+// robot 3 - 28
+
+//#define GEAR_RATIO 21
+#define GEAR_RATIO 28
 
 
 class SIMA_Class {
@@ -64,9 +75,20 @@ public:
 	void update_ticks();
 	void update_position();
 	void servo_write(uint8_t angle);
+	void sensor_init();
+	void update_distance();
 	/* USER CODE END PFP */
 
+	/* Private variables ---------------------------------------------------------*/
+	/* USER CODE BEGIN PV */
 
+	float speed_L = 0;
+	float speed_R = 0;
+
+	uint16_t distance;
+	bool stopflag = 0;
+
+	/* USER CODE BEGIN PV */
 
 private:
 	/* Private function prototypes -----------------------------------------------*/
@@ -77,7 +99,7 @@ private:
 	/* Private variables ---------------------------------------------------------*/
 	/* USER CODE BEGIN PV */
 
-	bool stopflag = 0;
+
 
 	int16_t speed_min = PWM_pulse*0.1 + 10;
 	int16_t speed_max = PWM_pulse*0.9 - 10;
@@ -88,20 +110,29 @@ private:
 	int32_t error_L = 0;
 	int32_t error_R = 0;
 
+	uint32_t time = 0;
+	uint32_t dif_time = 0;
+
 //	int32_t coeff = 44000;
 	float Radius = 32;
 	float Lenght = 108;
-	float ticks_per_rev = 44000;
+//	float ticks_per_rev = 44000;
+	uint32_t gear = 21;
+	uint32_t ticks = 1024;
+	float ticks_per_rev = GEAR_RATIO * ticks * 2;
 	float dist_per_rev  = M_PI * 2 * Radius;
-
-
 	float th_diff;
 	float d;
-
 	float d_l;
 	float d_r;
 
 //	uint16_t Step = 1024;
+
+//  sensor:
+
+	statInfo_t_VL53L0X distanceStr1;
+	VL53L0X dev1;
+	bool sensor_ready;
 
 	/* USER CODE BEGIN PV */
 };

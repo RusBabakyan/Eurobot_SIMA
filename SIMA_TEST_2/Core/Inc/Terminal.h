@@ -33,7 +33,16 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 
-enum CMD {SET_SPEED, PING, GRIPPER, POSITION, SET_POSITION, Count };
+enum CMD {SET_SPEED,
+		PING,
+		GRIPPER,
+		POSITION,
+		SET_POSITION,
+		SENSOR_INIT,
+		GET_SPEED,
+		GET_POS_SPEED,
+		GET_POS_DISTANCE,
+		Count };
 
 struct __attribute((packed)) CMD_SET_SPEED{
 	int16_t speed_L;
@@ -51,6 +60,22 @@ struct __attribute((packed)) SIMA_POSITION{
 	float X;
 	float Y;
 	float ANGLE;
+};
+
+struct __attribute((packed)) SIMA_POSITION_DISTANCE{
+	float X;
+	float Y;
+	float ANGLE;
+	bool stopflag;
+	uint16_t distance;
+};
+
+struct __attribute((packed)) POS_SPEED{
+	float X;
+	float Y;
+	float ANGLE;
+	float SPEED_L;
+	float SPEED_R;
 };
 
 extern UART_HandleTypeDef huart3;

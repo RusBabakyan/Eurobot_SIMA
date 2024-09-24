@@ -10,18 +10,20 @@
 #include "Terminal.h"
 
 
-uint8_t str[10];
+uint8_t str[25];
 uint8_t buf[3];
-uint8_t rsp[15];
+uint8_t rsp[25];
 uint8_t crc = 0;
 
-uint8_t CMD_LNG_IN[Count] = {5, 0, 1, 0, 12};
-uint8_t CMD_LNG_OUT[Count] = {0, 5, 0, 12, 0};
+uint8_t CMD_LNG_IN[Count] =  {5, 0, 1, 0, 12, 0, 0, 0, 0};
+uint8_t CMD_LNG_OUT[Count] = {0, 5, 0, 12, 0, 0, 8, 20, 15};
+
 
 CMD_SET_SPEED msg_in;
 
 extern SIMA_Class SIMA;
 extern SIMA_POSITION SIMA_POS;
+extern CMD_SET_SPEED target_speed;
 
 
 uint8_t calc_crc(uint8_t cmd, uint8_t* data, uint8_t data_length){
@@ -50,9 +52,9 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 	switch (cmd){
 	case SET_SPEED:
 		{
-		memcpy((uint8_t*)&msg_in, str, CMD_LNG_IN[cmd]);
+		memcpy((uint8_t*)&target_speed, str, CMD_LNG_IN[cmd]);
 		Send_response(SET_SPEED, rsp);
-		SIMA.set_wheels_speed(msg_in.speed_L, msg_in.speed_R, msg_in.antistop_flag);
+//		SIMA.set_wheels_speed(msg_in.speed_L, msg_in.speed_R, msg_in.antistop_flag);
 		}
 		break;
 
@@ -85,6 +87,45 @@ void TERMINAL(uint8_t cmd, uint8_t* str){
 		{
 		memcpy((uint8_t*)&SIMA_POS, str, CMD_LNG_IN[cmd]);
 		Send_response(SET_POSITION, (uint8_t*)&rsp);
+		}
+		break;
+
+	case SENSOR_INIT:
+		{
+		Send_response(SENSOR_INIT, (uint8_t*)&rsp);
+//		SIMA.sensor_init();
+		NVIC_SystemReset();
+		}
+		break;
+
+	case GET_SPEED:
+		{
+		memcpy((uint8_t*)&str,   (uint8_t*)&SIMA.speed_L, 4);
+		memcpy((uint8_t*)&str+4, (uint8_t*)&SIMA.speed_R, 4);
+		Send_response(GET_SPEED, (uint8_t*)&str);
+		}
+		break;
+
+	case GET_POS_SPEED:
+		{
+		POS_SPEED msg;
+		memcpy((uint8_t*)&msg, (uint8_t*)&SIMA_POS, 12);
+		msg.SPEED_L = SIMA.speed_L;
+		msg.SPEED_R = SIMA.speed_R;
+//		memcpy((uint8_t*)&str, 		   (uint8_t*)&SIMA_POS, 12);
+//		memcpy((uint8_t*)&str +12,     (uint8_t*)&SIMA.speed_L, 4);
+//		memcpy((uint8_t*)&str +16, (uint8_t*)&SIMA.speed_R, 4);
+		Send_response(GET_POS_SPEED, (uint8_t*)&msg);
+		}
+		break;
+
+	case GET_POS_DISTANCE:
+		{
+		SIMA_POSITION_DISTANCE msg;
+		memcpy((uint8_t*)&msg, (uint8_t*)&SIMA_POS, 12);
+		msg.stopflag = SIMA.stopflag;
+		msg.distance = SIMA.distance;
+		Send_response(GET_POS_DISTANCE, (uint8_t*)&msg);
 		}
 		break;
 	}

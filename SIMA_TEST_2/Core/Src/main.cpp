@@ -27,6 +27,7 @@
 #include "math.h"
 
 
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,7 +59,7 @@ UART_HandleTypeDef huart3;
 
 SIMA_POSITION SIMA_POS;
 SIMA_Class SIMA;
-
+CMD_SET_SPEED target_speed = {0,0,false};
 extern uint8_t buf[3];
 
 uint32_t second = 0;
@@ -120,17 +121,22 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM2_Init();
   MX_I2C1_Init();
-//  /* USER CODE BEGIN 2 */
+  /* USER CODE BEGIN 2 */
+
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+//  HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
 
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_1);
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
-  HAL_UART_Receive_IT (&huart3, buf, 1);
-
   SIMA.set_wheels_speed(0, 0, 0);
+  HAL_GPIO_WritePin(Power_GPIO_Port, Power_Pin, GPIO_PIN_RESET);
+
+  SIMA.sensor_init();
+
+  HAL_UART_Receive_IT (&huart3, buf, 1);
 
 
   /* USER CODE END 2 */
@@ -140,7 +146,7 @@ int main(void)
   while (1)
   {
 	  SIMA.update_position();
-//	  HAL_Delay(50);
+	  SIMA.update_distance();
 	  second = HAL_GetTick() / 1000;
     /* USER CODE END WHILE */
 
@@ -503,12 +509,23 @@ static void MX_GPIO_Init(void)
 /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, XSHUT_1_Pin|Power_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, DIR_L_Pin|STP_L_Pin|DIR_R_Pin|STP_R_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : XSHUT_1_Pin Power_Pin */
+  GPIO_InitStruct.Pin = XSHUT_1_Pin|Power_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : DIR_L_Pin STP_L_Pin DIR_R_Pin STP_R_Pin */
   GPIO_InitStruct.Pin = DIR_L_Pin|STP_L_Pin|DIR_R_Pin|STP_R_Pin;

@@ -1,0 +1,4 @@
+pgzero
+pyserial
+inputs
+numpy
